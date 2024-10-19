@@ -3,3 +3,5 @@
 
  ![Alt Text](training_process.gif)
 
+ Training over 1000 epochs
+
