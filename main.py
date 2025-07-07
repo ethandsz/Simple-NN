@@ -23,6 +23,9 @@ def generate_data(n=100):
         
 my_nn = Net()
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+my_nn.to(device)
+
 learning_rate = 0.1
 epochs = 1000
 
@@ -35,7 +38,8 @@ save = True
 
 # Generate training data
 x_train, y_train = generate_data()
-
+x_train = x_train.to(device)
+y_train = y_train.to(device)
 # Training loop
 losses =[]
 for epoch in range(epochs):
@@ -50,17 +54,17 @@ for epoch in range(epochs):
     
     losses.append(loss.item())
     
-    if (epoch+1) % 20 == 0:
+    if (epoch+1) % 250 == 0:
         print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
         if(save):
             my_nn.eval()  # Put the model in evaluation mode
             with torch.no_grad():  # No need to calculate gradients during evaluation
                 y_pred = my_nn(x_train)
-            plt.plot(x_train, y_train, label='Actual function', color='blue')
+            plt.plot(x_train.cpu(), y_train.cpu(), label='Actual function', color='blue')
             plt.legend(loc='lower left')
             plt.twinx()
             plt.twiny()
-            plt.plot(x_train, y_pred, label='NN prediction', color='red')
+            plt.plot(x_train.cpu(), y_pred.cpu(), label='NN prediction', color='red')
             plt.legend(loc='lower right')
             plt.title(f'Neural Network Fitting f(x) = sin(x)\nEpoch = {epoch}')
             plt.show()
@@ -69,8 +73,8 @@ for epoch in range(epochs):
 my_nn.eval()  # Put the model in evaluation mode
 with torch.no_grad():  # No need to calculate gradients during evaluation
     y_pred = my_nn(x_train)
-plt.plot(x_train, y_train, label='Actual function', color='blue')
-plt.plot(x_train, y_pred, label='NN prediction', color='red')
+plt.plot(x_train.cpu(), y_train.cpu(), label='Actual function', color='blue')
+plt.plot(x_train.cpu(), y_pred.cpu(), label='NN prediction', color='red')
 plt.legend()
 plt.title(f'Neural Network Fitting f(x) = sin(x)')
 plt.show()
